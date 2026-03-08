@@ -1,0 +1,45 @@
+@startuml class
+
+class Facade {
+    + operate()
+}
+
+class SubTaskClass1 {
+    + subOperate1()
+}
+
+class SubTaskClass2 {
+    + subOperate2()
+}
+
+class SubTaskClass3 {
+    + subOperate3()
+}
+
+Facade --> SubTaskClass1
+Facade --> SubTaskClass2
+Facade --> SubTaskClass3
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant Facade
+participant SubTaskClass1
+participant SubTaskClass2
+participant SubTaskClass3
+
+Client -> Facade : operate()
+Facade -> SubTaskClass1 : subOperate1()
+SubTaskClass1 --> Facade : result
+
+Facade -> SubTaskClass2 : subOperate2()
+SubTaskClass2 --> Facade : result
+
+Facade -> SubTaskClass3 : subOperate3()
+SubTaskClass3 --> Facade : result
+
+Facade --> Client : result
+
+@enduml
