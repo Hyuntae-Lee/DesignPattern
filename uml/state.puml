@@ -1,0 +1,50 @@
+@startuml StatePatternClassDiagram
+
+interface State {
+    + operation()
+}
+
+class ConcreteState1 {
+    - context : Context
+    + operation()
+}
+
+class ConcreteState2 {
+    - context : Context
+    + operation()
+}
+
+class Context {
+    - state : State
+    - setState(s : State)
+    + operation()
+}
+
+State <|.. ConcreteState1
+State <|.. ConcreteState2
+Context --> State
+ConcreteState1 --> Context
+ConcreteState2 --> Context
+
+@enduml
+
+@startuml StatePatternSequenceDiagram
+
+actor Client
+participant Context
+participant ConcreteState1
+participant ConcreteState2
+
+Client -> Context : operation()
+Context -> ConcreteState1 : operation()
+ConcreteState1 -> Context : setState(concreteState2)
+ConcreteState1 --> Context : <<result>>
+Context -> Client : <<result>>
+
+Client -> Context : operation()
+Context -> ConcreteState2 : operation()
+ConcreteState2 -> Context : setState(null)
+ConcreteState2 --> Context : <<result>>
+Context -> Client : <<result>>
+
+@enduml
