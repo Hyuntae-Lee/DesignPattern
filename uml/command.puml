@@ -1,0 +1,43 @@
+@startuml CommandPatternClassDiagram
+
+class Receiver {
+    + operation()
+}
+
+interface Command {
+    + excuteCommand()
+}
+
+class ConcreteCommand {
+    - receiver : Receiver
+    - param
+    + excuteCommand()
+}
+
+class Invoker {
+    - command : Command
+    + setCommand(c : Command)
+    + invoke()
+}
+
+Command <|.. ConcreteCommand
+Invoker --> Command
+ConcreteCommand --> Receiver
+
+@enduml
+
+@startuml CommandPatternSequenceDiagram
+
+actor Client
+participant Invoker
+participant ConcreteCommand
+participant Receiver
+
+Client -> ConcreteCommand : new()
+ConcreteCommand --> Client : <<instance>>
+Client -> Invoker : setCommand(Command)
+Client -> Invoker : invoke()
+Invoker -> ConcreteCommand : excuteCommand()
+ConcreteCommand -> Receiver : operation()
+
+@enduml

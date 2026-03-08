@@ -1,0 +1,43 @@
+@startuml class
+
+interface Strategy {
+    + operate()
+}
+
+class Strat1 {
+    + operate()
+}
+
+class Strat2 {
+    + operate()
+}
+
+class Commander {
+    - strategy : Strategy
+    + Commander(s: Strategy)
+    + runStategy()
+}
+
+Strategy <|.. Strat1
+Strategy <|.. Strat2
+Commander --> Strategy
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant Commander
+participant Strat1
+participant Strat2
+
+Client -> Strat1 : new()
+Strat1 --> Client : <<instance : strat1>>
+Client -> Commander : new (strat1)
+Commander --> Client : <<instance>>
+Client -> Commander : runStategy()
+Commander -> Strat1 : operate()
+Strat1 --> Commander : result
+Commander --> Client : result
+
+@enduml

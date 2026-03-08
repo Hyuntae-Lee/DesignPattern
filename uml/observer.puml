@@ -1,0 +1,42 @@
+@startuml classes
+
+interface Observer {
+    + notified() : void
+}
+
+class ConcreteObserver1 {
+    + notified() : void 
+}
+
+class ConcreteObserver2 {
+    + notified() : void
+}
+
+class Observee {
+    - observer : Observer []
+    + addObserver(o : Observer)
+    + notify() : void
+    + operate()
+}
+
+Observer <|.. ConcreteObserver1
+Observer <|.. ConcreteObserver2
+
+Observee o--> Observer
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant Observee
+participant ConcreteObserver1
+participant ConcreteObserver2
+
+Client -> Observee : operate()
+Observee -> Observee : notify()
+Observee -> ConcreteObserver1 : notified()
+Observee -> ConcreteObserver2 : notified()
+Observee --> Client : result
+
+@enduml
