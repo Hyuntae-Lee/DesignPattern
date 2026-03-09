@@ -1,0 +1,47 @@
+﻿@startuml class
+
+' classes
+abstract class Product
+
+class ConcreteProduct
+
+abstract class Factory {
+    {abstract} +createProduct() : Product
+    +anOperation()
+}
+
+class ConcreteFactory {
+    +createProduct() : Product
+}
+
+' relations
+ConcreteProduct --|> Product
+ConcreteFactory --|> Factory
+Factory --> Product
+
+@enduml
+
+@startuml sequence
+
+actor Client
+
+participant Factory
+participant ConcreteFactory
+participant Product
+participant ConcreteProduct
+
+Client -> ConcreteFactory : anOperation()
+activate ConcreteFactory
+
+ConcreteFactory -> ConcreteFactory : createProduct()
+activate ConcreteFactory
+
+ConcreteFactory -> ConcreteProduct : <<create>>
+activate ConcreteProduct
+ConcreteProduct --> ConcreteFactory : instance
+deactivate ConcreteProduct
+
+ConcreteFactory --> Client : Product
+deactivate ConcreteFactory
+
+@enduml

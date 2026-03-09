@@ -1,0 +1,23 @@
+﻿@startuml class
+
+interface Component {
+    + operation() : void
+}
+
+class Leaf {
+    + operation() : void
+}
+
+class Composite {
+    - children : Component[]
+    + operation() : void
+    + add(c : Component)
+    + remove(c : Component)
+    + get(idx : int) : Component
+}
+
+Component <|.. Leaf
+Component <|.. Composite
+Component <.. Composite
+
+@enduml

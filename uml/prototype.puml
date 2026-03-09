@@ -1,0 +1,37 @@
+﻿@startuml class
+
+' classes
+interface Prototype {
+    + Clone() : Prototype
+}
+
+class ConcretePrototype {
+    - state : string
+    + Clone() : ConcretePrototype
+}
+
+class Client {
+    - prototype : Prototype
+    + Operation()
+}
+
+' relations
+Prototype <|.. ConcretePrototype
+Client --> Prototype
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant ConcretePrototype
+participant ClonedObject
+
+Client -> ConcretePrototype : Clone()
+activate ConcretePrototype
+ConcretePrototype --> Client : new object (copy)
+deactivate ConcretePrototype
+
+Client -> ClonedObject : Operation()
+
+@enduml

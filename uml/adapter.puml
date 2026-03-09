@@ -1,0 +1,37 @@
+﻿@startuml class
+
+interface Target {
+    + request()
+}
+
+class Adapter {
+    - adaptee : Adaptee
+    + request()
+}
+
+class Adaptee {
+    + subRequest1()
+    + subRequest2()
+}
+
+Target <|.. Adapter
+Adapter --> Adaptee
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant Adapter
+participant Adaptee
+
+Client -> Adapter : request()
+activate Adapter
+
+Adapter -> Adaptee : subRequest1()
+Adapter -> Adaptee : subRequest2()
+
+Adapter --> Client : return
+deactivate Adapter
+
+@enduml

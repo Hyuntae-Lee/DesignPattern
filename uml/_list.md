@@ -1,20 +1,26 @@
 Design Pattern
 Creation
-	•	Factory Method
-	•	Builder
+- Factory Method
+- Builder
 Structure
-	•	Adapter
-	•	Facade
-	•	Composite
-	•	Decorator
+- Adapter
+- Facade
+- Composite
+- Decorator
 Behavior
-	•	Strategy
-	•	Observer
-	•	Command
-	•	State
+- Strategy
+- Observer
+- Command
+- State
 
 UML
-1️⃣ Class diagrams
-2️⃣ Sequence diagrams
-3️⃣ Component diagrams
-4️⃣ State diagrams
+- Class diagrams
+- Sequence diagrams
+- Component diagrams
+- State diagrams
+
+Diagrams
+- Class Diagram
+- Sequence Diagram
+- State Diagram (State Machine Diagram)
+- Activity Diagram

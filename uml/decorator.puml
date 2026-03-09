@@ -1,0 +1,65 @@
+﻿@startuml class
+interface Component {
+    + operation()
+}
+
+class ConcreteComponent {
+    + operation()
+}
+
+abstract Decorator {
+    # component : Component
+    + operation()
+}
+
+class ConcreteDecorator1 {
+    - localOperation1()
+    + ConcreteDecorator1(c : Component)
+    + operation()
+}
+
+class ConcreteDecorator2 {
+    - localOperation2()
+    + ConcreteDecorator2(c : Component)
+    + operation()
+}
+
+Component <|.. ConcreteComponent
+Component <|.. Decorator
+Decorator <|-- ConcreteDecorator1
+Decorator <|-- ConcreteDecorator2
+Decorator o--> Component
+@enduml
+
+@startuml sequence
+
+actor Client
+participant ConcreteComponent
+participant ConcreteDecorator1
+participant ConcreteDecorator2
+
+Client -> ConcreteComponent : <<create>>
+activate ConcreteComponent
+ConcreteComponent --> Client : <<instance : com>>
+deactivate ConcreteComponent
+
+Client -> ConcreteDecorator1 : new ConcreteDecorator1(com)
+activate ConcreteDecorator1
+ConcreteDecorator1 --> Client : <<instance : dec1>>
+deactivate ConcreteDecorator1
+
+Client -> ConcreteDecorator2 : new ConcreteDecorator1(dec1)
+activate ConcreteDecorator2
+ConcreteDecorator2 --> Client : <<instance : dec2>>
+deactivate ConcreteDecorator2
+
+Client -> ConcreteDecorator2 : operation()
+ConcreteDecorator2 -> ConcreteDecorator2 : localOperation2()
+ConcreteDecorator2 -> ConcreteDecorator1 : operation()
+ConcreteDecorator1 -> ConcreteDecorator1 : localOperation1()
+ConcreteDecorator1 -> ConcreteComponent : operation()
+ConcreteComponent --> ConcreteDecorator1 : result
+ConcreteDecorator1 --> ConcreteDecorator2 : result
+ConcreteDecorator2 --> Client : result
+
+@enduml

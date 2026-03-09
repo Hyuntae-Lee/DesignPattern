@@ -1,0 +1,84 @@
+﻿@startuml class
+
+interface Renderer {
+    + render()
+}
+
+class VectorRenderer {
+    + render()
+}
+
+class RasterRenderer {
+    + render()
+}
+
+abstract class Shape {
+    - renderer : Renderer
+    + Shape(renderer : Renderer)
+    + draw()
+        renderer.render()
+}
+
+class Circle {
+    + Circle(renderer : Renderer)
+    + draw()
+}
+
+class Rectangle {
+    + Rectangle(renderer : Renderer)
+    + draw()
+}
+
+Shape <|-- Circle
+Shape <|-- Rectangle
+
+Renderer <|.. VectorRenderer
+Renderer <|.. RasterRenderer
+
+Shape --> Renderer
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant VectorRenderer
+participant RasterRenderer
+participant Circle
+participant Rectangle
+
+Client -> VectorRenderer : new VectorRenderer
+activate VectorRenderer
+VectorRenderer --> Client : <<instance : vectorRenderer>>
+deactivate VectorRenderer
+
+Client -> RasterRenderer : new RasterRenderer
+activate RasterRenderer
+RasterRenderer --> Client : <<instance : rasterRenderer>>
+deactivate RasterRenderer
+
+Client -> Circle : new Circle(VectorRenderer)
+activate Circle
+Circle --> Client : <<instance : circleVec>>
+deactivate Circle
+
+Client -> Circle : new Circle(RasterRenderer)
+activate Circle
+Circle --> Client : <<instance : circleRas>>
+deactivate Circle
+
+Client -> Rectangle : new Rectangle(VectorRenderer)
+activate Rectangle
+Rectangle --> Client : <<instance : rectangleVec>>
+deactivate Rectangle
+
+Client -> Rectangle : new Rectangle(RasterRenderer)
+activate Rectangle
+Rectangle --> Client : <<instance : rectangleRas>>
+deactivate Rectangle
+
+Client -> Circle : draw()
+Circle -> Render : render()
+Client -> Rectangle : draw()
+
+@enduml

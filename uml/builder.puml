@@ -1,0 +1,54 @@
+﻿@startuml class
+
+class Product {
+    -factor0 : int
+    -factor1 : int
+    -factor2 : int
+    +setFactor0(f:int) : void
+    +setFactor1(f:int) : void
+    +setFactor2(f:int) : void
+}
+
+interface Builder {
+    +buildFactor0(f:int) : void
+    +buildFactor1(f:int) : void
+    +buildFactor2(f:int) : void
+    +getResult() : Product
+}
+
+class ConcreteBuilder {
+    -product : Product
+    +buildFactor0(f:int) : void
+    +buildFactor1(f:int) : void
+    +buildFactor2(f:int) : void
+    +getResult() : Product
+}
+
+class Director {
+    +createProduct() : Product
+}
+
+' relation
+ConcreteBuilder --|> Builder
+ConcreteBuilder *-- Product
+Director --> Builder
+
+@enduml
+
+@startuml sequence
+
+actor Client
+participant Director
+participant "builder : Builder" as Builder
+
+Client -> ConcreteBuilder : <<create>>
+Client -> Director : construct(builder)
+
+Director -> Builder : buildPartA()
+Director -> Builder : buildPartB()
+Director -> Builder : buildPartC()
+
+Client -> Builder : getResult()
+Builder --> Client : Product
+
+@enduml
