@@ -1,0 +1,11 @@
+﻿@startuml SequenceDiagram for Initialize
+
+actor Client
+participant MainWindow
+participant GUIMngr
+participant Controller
+participant CommMngr
+
+MainWindow -> GUIMngr : new
+
+@enduml

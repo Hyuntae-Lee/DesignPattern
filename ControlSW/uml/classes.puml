@@ -1,0 +1,93 @@
+﻿@startuml Classes
+
+' interfaces
+interface CommRecvCallback {
+    + onRespReceived(head: string, cmd: string, data: string)
+    + onCommentReceived(value: string)
+    + onReqSent(head: string, cmd: string, data: string)
+}
+
+interface GuiInputCallback {
+    + onConfirmButtonClicked()
+    + onReadyButtonClicked()
+    + onKVPChanged(value: double)
+    + onMAChanged(value: double)
+}
+
+' Controller
+class Controller {
+    - m_comm : CommunicationMngr
+    - m_imagingMngr : ImagingMngr
+    - m_dicomMngr : DICOMMngr
+    - m_guiMngr : GUIMngr
+    - m_patientInfo : PatientInfo
+    - m_dataExport : DataExport
+
+    ' Singleton instance
+    - static instance : Controller
+
+    ' CommRecvCallback
+    # onRespReceived(head: string, cmd: string, data: string)
+    # onCommentReceived(value: string)
+    # onReqSent(head: string, cmd: string, data: string)
+    ' MainPageInputCallback
+    # onConfirmButtonClicked()
+    # onReadyButtonClicked()
+    # onKVPChanged(value: double)
+    # onMAChanged(value: double)
+
+    ' Private constructor
+    - Controller()
+
+    ' Static method to get the singleton instance
+    + static Ins() : Controller
+}
+
+' Communication manager
+class CommMngr {
+    - receiver: CommRecvCallback
+    + CommMngr(r: CommRecvCallback)
+    + OpenEthernet(ip: string, port: port)
+    + CloseEthernet()
+    + SendCommand(head: string, cmd: string, data: string, bWaitForResponse: bool)
+}
+
+' GUI manager
+class GUIMngr {
+    - mainWindow : MainWindow
+    + GUIMngr(mainWindow: MainWindow)
+    + ShowMainPage()
+}
+
+' Imaging manager
+class ImagingMngr {
+
+}
+
+' DICOM manager
+class DICOMMngr {
+
+}
+
+' Patient Information
+class PatientInfo {
+
+}
+
+' Export resulting data
+class DataExport {
+
+}
+
+' Log manager
+class LogMngr {
+
+}
+
+' relateions
+CommRecvCallback <|.. Controller
+CommRecvCallback ..* CommMngr
+GuiInputCallback <|.. Controller
+GuiInputCallback ..* GUIMngr
+
+@enduml
