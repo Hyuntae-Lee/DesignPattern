@@ -14,7 +14,7 @@ class Adaptee {
     + subRequest2()
 }
 
-Target <|.. Adapter
+Adapter ..|> Target
 Adapter --> Adaptee
 
 @enduml

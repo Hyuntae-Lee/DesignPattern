@@ -14,6 +14,18 @@ interface GuiInputCallback {
     + onMAChanged(value: double)
 }
 
+' Builder
+class ControllerBuilder {
+    - controller : Controller
+    + setComm(ins: CommunicationMngr) : ControllerBuilder
+    + setImagingMngr(ins: ImagingMngr) : ControllerBuilder
+    + setDicomMngr(dicomMngr: DICOMMngr) : ControllerBuilder
+    + setGuiMngr(guiMngr: GUIMngr) : ControllerBuilder
+    + setPatientInfo(patientInfo: PatientInfo) : ControllerBuilder
+    + setDataExport(dataExport : DataExport) : DataExport
+    + getResult() : Controller
+}
+
 ' Controller
 class Controller {
     - m_comm : CommunicationMngr
@@ -23,8 +35,12 @@ class Controller {
     - m_patientInfo : PatientInfo
     - m_dataExport : DataExport
 
-    ' Singleton instance
-    - static instance : Controller
+    + setComm(ins: CommunicationMngr) : void
+    + setImagingMngr(ins: ImagingMngr) : void
+    + setDicomMngr(dicomMngr: DICOMMngr) : void
+    + setGuiMngr(guiMngr: GUIMngr) : void
+    + setPatientInfo(patientInfo: PatientInfo) : void
+    + setDataExport(dataExport : DataExport) : void
 
     ' CommRecvCallback
     # onRespReceived(head: string, cmd: string, data: string)
@@ -35,12 +51,6 @@ class Controller {
     # onReadyButtonClicked()
     # onKVPChanged(value: double)
     # onMAChanged(value: double)
-
-    ' Private constructor
-    - Controller()
-
-    ' Static method to get the singleton instance
-    + static Ins() : Controller
 }
 
 ' Communication manager

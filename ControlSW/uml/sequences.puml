@@ -3,9 +3,18 @@
 actor Client
 participant MainWindow
 participant GUIMngr
+participant ControllerBuilder
 participant Controller
-participant CommMngr
 
-MainWindow -> GUIMngr : new
+MainWindow -> GUIMngr : new (MainWindow)
+GUIMngr --> MainWindow : <<instance : guiMngr>>
+MainWindow -> ControllerBuilder : new()
+ControllerBuilder -> Controller : new()
+Controller --> ControllerBuilder : <<instance : controller>>
+ControllerBuilder --> MainWindow : <<instance : controllerBuilder>>
+MainWindow -> ControllerBuilder : setGuiMngr(guiMngr)
+ControllerBuilder -> Controller : setGuiMngr(guiMngr)
+MainWindow -> ControllerBuilder : getResult
+ControllerBuilder --> MainWindow : <<instance : Controller>>
 
 @enduml

@@ -29,9 +29,10 @@ class Director {
 }
 
 ' relation
-ConcreteBuilder --|> Builder
+Builder <-- Director
+Builder <|-- ConcreteBuilder
 ConcreteBuilder *-- Product
-Director --> Builder
+
 
 @enduml
 
