@@ -1,0 +1,58 @@
+﻿@startuml Class Diagram for ControlSW
+
+interface ICommObserver {
+    + OnCommRecv(msg: string)
+    + OnCommSent(msg: string)
+}
+
+class CommSender {
+    - m_callback: ICommObserver
+    + Connect(ip: string, port: int) : bool
+    + Disconnect() : void
+    + IsConnected() : bool
+    + Send(cmd: string) : void
+}
+
+class CommItem {
+    + rawCmd: string
+    + head: string
+    + cmd: string
+    + value: string
+    + isValid: bool
+}
+
+class CommMngr {
+    - commItemsToSend: CommItem[]
+    - m_commSender: CommSender
+    - m_callback: ICommObserver
+    - parseCommand(msg: string) : CommItem
+    + OnCommRecv(msg: string)
+    + OnCommSent(msg: string)
+    + OpenConnection(ip: string, port: int) : bool
+    + CloseConnection() : void
+    + IsConnected() : bool
+    + SendCommand(cmd: string, bWaitResp: bool) : void
+}
+
+class LogMngr {
+    - m_path: string
+    + SetPath(path: string) : bool
+    + Write(log: string) : bool
+}
+
+class Controller {
+    - m_logMngr: LogMngr
+    - m_comm: CommMngr
+    + OnCommRecv(msg: string)
+    + OnCommSent(msg: string)
+}
+
+ICommObserver <|.. Controller
+ICommObserver <|.. CommMngr
+ICommObserver <|.. CommSender
+CommMngr o-- CommItem
+CommMngr o-- CommSender
+Controller o-- LogMngr
+Controller o-- CommMngr
+
+@enduml

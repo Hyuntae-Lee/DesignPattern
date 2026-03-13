@@ -1,0 +1,9 @@
+﻿@startuml Sequence Diagram for Send and Receive messages
+
+participant Controller
+participant CommMngr
+participant CommSender
+participant CommItem
+
+
+@enduml
