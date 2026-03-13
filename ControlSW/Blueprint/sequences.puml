@@ -1,9 +1,15 @@
-﻿@startuml Sequence Diagram for Send and Receive messages
+﻿@startuml Sequence Diagram to send and receive
 
 participant Controller
 participant CommMngr
 participant CommSender
 participant CommItem
+
+Controller -> CommMngr : SendCommand()
+CommMngr -> CommMngr : parseCommand()
+CommMngr -> CommMngr : push to commItemsToSend
+
+CommMngr --> Controller : true
 
 
 @enduml
