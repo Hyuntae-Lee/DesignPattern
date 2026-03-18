@@ -10,8 +10,10 @@
    * IsConnected() : bool
    * OnRespReceive(msg: string) : void
       - Called when a response received for the sent command.
+   * OnCommandReceived(msg: string) : void
+      - Called when a command received except the response for the sent command.
    * OnCommentReceived(msg: string) : void
-      - Called when any not formatted text is received.
+      - Called when a line of text is received if it is not composed to command format.
 3. It recognize command by following format
    * [ABC_DDD_VVVV...]
    * The command should be start with '[' and end with ']'.
@@ -34,3 +36,7 @@
    * The queued commands should be sent sequencely after the previous command reponsed.
 6. The client can determine wait for response or not by bWaitForResp parameter in SendCommand().
    * If bWaitForResp is false, CommMngr should not wait for the response for this command.
+7. It parses incoming text line by line.
+   * Lines are delimited by `\n` (newline). Trailing `\r` should be trimmed.
+   * Each complete line is processed as a single received message.
+   * The final line must be included/processed even if it is not terminated by a newline character.
