@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{491EF068-DEA4-4972-BBC4-2E08CBF71367}</ProjectGuid>
+    <ProjectGuid>{5660A48C-D546-4706-87A8-7E7409931583}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ControlSW</RootNamespace>
     <AssemblyName>ControlSW</AssemblyName>
@@ -63,6 +63,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="CommMngr.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -93,12 +94,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\CommMngr\CommMngr.csproj">
-      <Project>{84ef91ba-3974-1bc5-074b-689076432208}</Project>
-      <Name>CommMngr</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
