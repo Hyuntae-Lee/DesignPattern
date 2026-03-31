@@ -12,8 +12,8 @@
    * HeightM : string // Tag(0010,1020) : Patient's Size (m)
    * BMI     : string // Tag(0010,1022) : Body Mass Index (kg/m^2)
 4. It has following interfaces.
-   * LoadPatientInfo(out patient: PATIENT_INFO) : bool
-     - Read patient information from the planned location.
+   * LoadPatientInfo(path: string) : bool
+     - Read patient information from the specified location.
    * GetAgeToInt(): int
      - Return the age in integer type
    * GetWeightToDouble(): double
