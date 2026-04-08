@@ -56,6 +56,3 @@
      - Edit the name of existing sub-task in the clicked task.
      - Edit the color of existing sub-task.
      - Edit the period of existing sub-task.
-9. Resource cross tasks view
-   - The class name for this view should be ResourceCrossTasksView
-   - 
