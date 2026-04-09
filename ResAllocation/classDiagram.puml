@@ -1,0 +1,157 @@
+﻿@startuml ResAllocation class diagram
+
+' =========================
+' Core Domain Models
+' =========================
+
+class Project {
+  +UUID id
+  +string name
+  +string color
+  +Date startDate
+  +Date endDate
+}
+
+class Task {
+  +UUID id
+  +UUID projectId
+  +string name
+  +string color
+  +Date startDate
+  +Date endDate
+}
+
+class SubTask {
+  +UUID id
+  +UUID parentTaskId
+  +string name
+  +string color
+  +Date startDate
+  +Date endDate
+}
+
+class Resource {
+  +UUID id
+  +string name
+  +string color
+}
+
+class TaskResourceAssignment {
+  +UUID taskId
+  +UUID resourceId
+}
+
+Project "1" --> "0..*" Task
+Task "1" --> "0..*" SubTask
+Task "0..*" --> "0..*" Resource : assigned via
+
+
+' =========================
+' Holiday Provider
+' =========================
+
+interface HolidayProvider {
+  +bool isHoliday(Date date)
+  +string getHolidayName(Date date)
+}
+
+class StaticHolidayProvider
+class LocaleBasedHolidayProvider
+class RemoteHolidayProvider
+
+HolidayProvider <|.. StaticHolidayProvider
+HolidayProvider <|.. LocaleBasedHolidayProvider
+HolidayProvider <|.. RemoteHolidayProvider
+
+
+' =========================
+' Backend (Rust - Tauri Core)
+' =========================
+
+package "Backend (Rust)" {
+
+  class ProjectService {
+    +createProject()
+    +deleteProject()
+    +updateProject()
+    +getProjects()
+  }
+
+  class TaskService {
+    +createTask()
+    +deleteTask()
+    +updateTask()
+    +getTasksByProject()
+  }
+
+  class ResourceService {
+    +createResource()
+    +deleteResource()
+    +updateResource()
+    +getResources()
+  }
+
+  class AssignmentService {
+    +assignResourceToTask()
+    +removeResourceFromTask()
+    +getAssignments()
+  }
+
+  class TimeService {
+    +getTasksInRange(Date start, Date end)
+  }
+
+}
+
+ProjectService --> Project
+TaskService --> Task
+ResourceService --> Resource
+AssignmentService --> TaskResourceAssignment
+TimeService --> Task
+TimeService --> HolidayProvider
+
+
+' =========================
+' Frontend (Tauri UI)
+' =========================
+
+package "Frontend (Tauri UI)" {
+
+  class TimeBasedOverview {
+    +renderGrid()
+    +renderTasks()
+    +applyHolidayStyle()
+  }
+
+  class ProjectManagingView
+  class ResourceManagingView
+  class ProjectTaskManagingPopup
+  class TaskDetailManagingPopup
+  class ResourceTaskView
+
+  class AppState {
+    +Project[] projects
+    +Task[] tasks
+    +Resource[] resources
+    +TaskResourceAssignment[] assignments
+    +Date visibleStartDate
+    +Date visibleEndDate
+  }
+
+}
+
+TimeBasedOverview --> AppState
+ProjectManagingView --> AppState
+ResourceManagingView --> AppState
+
+TimeBasedOverview --> TimeService
+TimeBasedOverview --> HolidayProvider
+
+ProjectManagingView --> ProjectService
+ResourceManagingView --> ResourceService
+ProjectTaskManagingPopup --> TaskService
+TaskDetailManagingPopup --> TaskService
+ResourceTaskView --> AssignmentService
+
+
+@enduml
