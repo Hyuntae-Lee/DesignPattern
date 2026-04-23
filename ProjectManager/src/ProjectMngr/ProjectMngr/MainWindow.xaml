@@ -1,0 +1,26 @@
+﻿<Window x:Class="ProjectMngr.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ProjectMngr"
+        xmlns:views="clr-namespace:ProjectMngr.Views"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="720" Width="1200">
+    <DockPanel>
+        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Background="#EEE">
+            <ToggleButton Name="ToggleProject" Content="Projects" Margin="4"/>
+            <ToggleButton Name="ToggleResource" Content="Resources" Margin="4"/>
+        </StackPanel>
+
+        <Border Name="LeftBorder" Width="280" DockPanel.Dock="Left" BorderBrush="Gray" BorderThickness="0,0,1,0">
+            <views:ProjectView/>
+        </Border>
+
+        <Border Name="RightBorder" Width="280" DockPanel.Dock="Right" BorderBrush="Gray" BorderThickness="1,0,0,0">
+            <views:ResourceView/>
+        </Border>
+
+        <views:TimelineView/>
+    </DockPanel>
+</Window>

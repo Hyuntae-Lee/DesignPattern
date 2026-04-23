@@ -1,0 +1,54 @@
+﻿@startuml Classes
+
+class VResource {
+    -name: string
+    -color: Color
+}
+
+class VTask {
+    -beginDate: Date
+    -endDate: Date
+    -color: Color
+    -resource: VResource
+}
+
+class VProject {
+    -name: string
+    -color: Color
+    -tasks: Task[]
+    +getTask(index: int): VTask
+}
+
+class Controller {
+    ' singleton
+    - instance : Controller
+    - Controller()
+    + getInstance() : Controller
+
+    -projects: VProject[]
+    -resources: VResource[]
+}
+
+class ProjectView {
+    +updateDisplay()
+}
+
+class ResourceView {
+    +updateDisplay()
+}
+
+class TimelineView {
+    +updateDisplay()
+}
+
+' Releations
+VProject <--* Controller::projects
+VResource <--* Controller::resources
+ProjectView o--> Controller
+ResourceView o--> Controller
+TimelineView o--> Controller
+
+VTask::resource o--> VResource
+VProject::tasks *--> VTask
+
+@enduml

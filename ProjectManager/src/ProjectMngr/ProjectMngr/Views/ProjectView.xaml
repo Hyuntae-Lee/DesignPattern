@@ -1,0 +1,25 @@
+﻿<UserControl x:Class="ProjectMngr.Views.ProjectView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:ProjectMngr.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="400" d:DesignWidth="250">
+    <DockPanel Margin="4">
+        <StackPanel DockPanel.Dock="Top" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,4">
+            <Button Name="AddProjectBtn" Padding="6,2" Margin="0,0,4,0">Add</Button>
+            <Button Name="RemoveProjectBtn" Padding="6,2">Remove</Button>
+        </StackPanel>
+
+        <ListBox Name="ProjectsList" DisplayMemberPath="Name" SelectedValuePath="." />
+        <StackPanel Orientation="Vertical" Margin="0,6,0,0">
+            <TextBlock Text="Edit selected project" FontWeight="Bold" Margin="0,6,0,2"/>
+            <TextBox Name="ProjectNameBox" Text="Name" Margin="0,2,0,2"/>
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                <Rectangle Name="ProjectColorRect" Width="24" Height="24" Stroke="Black" Margin="0,0,6,0"/>
+                <Button Name="PickColorBtn" Padding="6,2">Pick Color</Button>
+            </StackPanel>
+        </StackPanel>
+    </DockPanel>
+</UserControl>
