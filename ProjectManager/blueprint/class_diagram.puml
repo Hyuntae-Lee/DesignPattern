@@ -1,54 +1,122 @@
 ﻿@startuml Classes
 
-class VResource {
+' =======================
+' Domain Models
+' =======================
+
+class Resource {
     -name: string
     -color: Color
 }
 
-class VTask {
+class Task {
     -beginDate: Date
     -endDate: Date
     -color: Color
-    -resource: VResource
+    -resource: Resource
 }
 
-class VProject {
+class Project {
     -name: string
     -color: Color
     -tasks: Task[]
-    +getTask(index: int): VTask
+    +getTask(index: int): Task
 }
 
-class Controller {
-    ' singleton
-    - instance : Controller
-    - Controller()
-    + getInstance() : Controller
-
-    -projects: VProject[]
-    -resources: VResource[]
+class EmphasisArea {
+    -startDate: Date
+    -endDate: Date
+    -color: Color
 }
+
+' =======================
+' Application State
+' =======================
+
+class AppState {
+    ' singleton (temporary pragmatic choice)
+    -instance: AppState
+    -AppState()
+    +getInstance(): AppState
+
+    -projects: Project[]
+    -resources: Resource[]
+    -emphasisAreas: EmphasisArea[]
+}
+
+class SelectionState {
+    -selectedProject: Project
+    -selectedTask: Task
+}
+
+' =======================
+' View Layer
+' =======================
 
 class ProjectView {
-    +updateDisplay()
+    +bind(projects: Project[])
+    +onCreateProject()
+    +onDeleteProject()
+    +onEditProject()
+    +onEditTask()
 }
 
 class ResourceView {
-    +updateDisplay()
+    +bind(resources: Resource[])
+    +onCreateResource()
+    +onDeleteResource()
+    +onEditResource()
 }
 
 class TimelineView {
-    +updateDisplay()
+    -timeLineLayer: TimeLineLayer
+    -taskLayer: TaskLayer
+    -pathEmphasisLayer: PathEmphasisLayer
+    +render()
 }
 
-' Releations
-VProject <--* Controller::projects
-VResource <--* Controller::resources
-ProjectView o--> Controller
-ResourceView o--> Controller
-TimelineView o--> Controller
+class TimeLineLayer {
+    +renderGrid()
+}
 
-VTask::resource o--> VResource
-VProject::tasks *--> VTask
+class TaskLayer {
+    +renderTasks(projects: Project[])
+}
+
+class PathEmphasisLayer {
+    +renderAreas(areas: EmphasisArea[])
+}
+
+' =======================
+' Utility
+' =======================
+
+class TimeScale {
+    -startDate: Date
+    -weekWidth: float
+    +dateToX(date: Date): float
+}
+
+' =======================
+' Relationships
+' =======================
+
+AppState --> Project
+AppState --> Resource
+AppState --> EmphasisArea
+
+Project "1" --> "0..*" Task
+Task --> Resource
+
+SelectionState --> Project
+SelectionState --> Task
+
+ProjectView --> AppState
+ResourceView --> AppState
+TimelineView --> AppState
+
+TimelineView --> TimeScale
+TaskLayer --> TimeScale
+PathEmphasisLayer --> TimeScale
 
 @enduml
