@@ -7,6 +7,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="400" d:DesignWidth="600">
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-        <Canvas Name="MainCanvas" Background="White" Width="1200" Height="800"/>
+        <Canvas Name="MainCanvas" Background="White" Width="1200" Height="800" VerticalAlignment="Top"/>
     </ScrollViewer>
 </UserControl>

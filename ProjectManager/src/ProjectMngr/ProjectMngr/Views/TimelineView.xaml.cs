@@ -2,6 +2,7 @@
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Shapes;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 using Brushes = System.Windows.Media.Brushes;
 using Rectangle = System.Windows.Shapes.Rectangle;
 
@@ -14,14 +15,14 @@ namespace ProjectMngr.Views
     {
         private DateTime _start;
         private int _days;
-        private double _pxPerDay = 8.0;
+        private double _pxPerDay = 20.0;
         private double _rowHeight = 60.0;
 
         public TimelineView()
         {
             InitializeComponent();
-            _start = DateTime.Today.AddDays(-30);
-            _days = 180;
+            _start = GetMonday(DateTime.Today.AddDays(-30));
+            _days = 365;
             Loaded += TimelineView_Loaded;
             Controllers.Controller.Instance.Projects.CollectionChanged += (_, __) => Render();
         }
@@ -30,37 +31,129 @@ namespace ProjectMngr.Views
 
         private double DateToX(DateTime d) => (d - _start).TotalDays * _pxPerDay;
 
+        private DateTime GetMonday(DateTime date)
+        {
+            int diff = date.DayOfWeek - DayOfWeek.Monday;
+            if (diff < 0) diff += 7;
+            return date.AddDays(-diff);
+        }
+        private double GetRangeOfMonth(DateTime date)
+        {
+            var first = new DateTime(date.Year, date.Month, 1);
+            var nextMonth = first.AddMonths(1);
+            return (nextMonth - first).TotalDays;
+        }
+
+        private void DrawMonths(double y)
+        {
+            var currentlyDrawingTime = _start;
+            for (int i = 0; i <= _days; i++)
+            {
+                var thisTime = _start.AddDays(i);
+
+                if (currentlyDrawingTime.Month == thisTime.Month) continue;
+
+                currentlyDrawingTime = thisTime;
+
+                var x = DateToX(thisTime);
+                var widthOfMonth = GetRangeOfMonth(thisTime) * _pxPerDay;
+
+                const double canvasHeight = 30.0;
+
+                var tb = new TextBlock
+                {
+                    Text = currentlyDrawingTime.ToString("MMMM"),
+                    Foreground = Brushes.Black,
+                    Background = Brushes.Yellow,
+                    Width = widthOfMonth,
+                    Height = canvasHeight,
+                    TextAlignment = TextAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+
+                Canvas.SetLeft(tb, x);
+                Canvas.SetTop(tb, y);
+                MainCanvas.Children.Add(tb);
+
+                var lineBetweenMonths = new Line
+                {
+                    X1 = x,
+                    X2 = x,
+                    Y1 = 0,
+                    Y2 = canvasHeight,
+                    Stroke = Brushes.Black,
+                    StrokeThickness = 1
+                };
+                MainCanvas.Children.Add(lineBetweenMonths);
+            }
+        }
+
+        private void DrawWeeks(double y)
+        {
+            const double canvasHeight = 30.0;
+
+            for (int i = 0; i <= _days; i++)
+            {
+                var thisTime = _start.AddDays(i);
+                var x = DateToX(thisTime);
+
+                var tb = new TextBlock
+                {
+                    Text = thisTime.ToString("dd"),
+                    Foreground = Brushes.Black,
+                    Background = Brushes.White,
+                    Width = _pxPerDay,
+                    Height = canvasHeight,
+                    TextAlignment = TextAlignment.Center,
+                    VerticalAlignment = VerticalAlignment.Center,
+                };
+
+                Canvas.SetLeft(tb, x);
+                Canvas.SetTop(tb, y);
+                MainCanvas.Children.Add(tb);
+            }
+        }
+
+        private void DrawTimeLines(double y)
+        {
+            for (int i = 0; i <= _days; i++)
+            {
+                var thisTime = _start.AddDays(i);
+                var x = DateToX(thisTime);
+
+                var line = new Line
+                {
+                    X1 = x,
+                    Y1 = y,
+                    X2 = x,
+                    Y2 = MainCanvas.Height,
+                    Stroke = (i % 7 == 0 ? Brushes.LightGray : Brushes.LightGray),
+                    StrokeThickness = (i % 7 == 0 ? 1.0 : 0.5)
+                };
+                MainCanvas.Children.Add(line);
+            }
+        }
+
         private void Render()
         {
             MainCanvas.Children.Clear();
             var width = _days * _pxPerDay;
-            MainCanvas.Width = Math.Max(800, width + 200);
+            MainCanvas.Width = Math.Max(800, width);
 
-            // TimeLineLayer: draw week ticks and month labels
-            for (int i = 0; i <= _days; i++)
-            {
-                var x = DateToX(_start.AddDays(i));
-                var line = new Line { X1 = x, Y1 = 0, X2 = x, Y2 = MainCanvas.Height, Stroke = (i % 7 == 0 ? Brushes.LightGray : Brushes.LightGray), StrokeThickness = (i % 7 == 0 ? 1.0 : 0.5) };
-                MainCanvas.Children.Add(line);
-                if (i % 7 == 0)
-                {
-                    var dt = _start.AddDays(i);
-                    var tb = new TextBlock { Text = dt.ToString("dd MMM"), Foreground = Brushes.Gray };
-                    Canvas.SetLeft(tb, x + 2);
-                    Canvas.SetTop(tb, 0);
-                    MainCanvas.Children.Add(tb);
-                }
-            }
+            // TimeLineLayer
+            DrawMonths(0);
+            DrawWeeks(30);
+            DrawTimeLines(30);
 
             // Project and Task layers
             var projects = Controllers.Controller.Instance.Projects.ToList();
             for (int pi = 0; pi < projects.Count; pi++)
             {
                 var p = projects[pi];
-                double y = 30 + pi * _rowHeight;
+                double y = 60 + pi * _rowHeight;
 
                 // Project header band
-                var rect = new Rectangle { Width = MainCanvas.Width - 20, Height = 24, Fill = p.Brush, Stroke = Brushes.Black, Opacity = 0.5 };
+                var rect = new Rectangle { Width = MainCanvas.Width, Height = 24, Fill = p.Brush, Stroke = Brushes.Black, Opacity = 0.5 };
                 Canvas.SetLeft(rect, 0);
                 Canvas.SetTop(rect, y);
                 MainCanvas.Children.Add(rect);
