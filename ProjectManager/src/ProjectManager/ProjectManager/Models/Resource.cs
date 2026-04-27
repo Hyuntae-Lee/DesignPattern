@@ -1,14 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
-using Color = System.Windows.Media.Color;
 
-namespace ProjectMngr.Models
+namespace ProjectManager.Models
 {
-    class VResource : INotifyPropertyChanged
+    class Resource : INotifyPropertyChanged
     {
         private string _name = "Resource";
         private Color _color = Colors.LightGray;
@@ -27,8 +28,8 @@ namespace ProjectMngr.Models
 
         public SolidColorBrush Brush => new SolidColorBrush(_color);
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propName = null)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }

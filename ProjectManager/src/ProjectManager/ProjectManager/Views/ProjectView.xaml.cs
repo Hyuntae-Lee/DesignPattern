@@ -1,19 +1,22 @@
-﻿using ProjectMngr.Models;
+﻿using ProjectManager.Controllers;
+using ProjectManager.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using Controller = ProjectMngr.Controllers.Controller;
 
-namespace ProjectMngr.Views
+namespace ProjectManager.Views
 {
     /// <summary>
     /// Interaction logic for ProjectView.xaml
@@ -33,7 +36,7 @@ namespace ProjectMngr.Views
 
         private void ProjectsList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var p = ProjectsList.SelectedItem as VProject;
+            var p = ProjectsList.SelectedItem as Project;
             if (p == null)
             {
                 ProjectNameBox.Text = "";
@@ -46,20 +49,20 @@ namespace ProjectMngr.Views
 
         private void AddProjectBtn_Click(object sender, RoutedEventArgs e)
         {
-            var p = new VProject { Name = "New Project" };
+            var p = new Project { Name = "New Project" };
             Controller.Instance.AddProject(p);
             ProjectsList.SelectedItem = p;
         }
 
         private void RemoveProjectBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ProjectsList.SelectedItem is VProject p)
+            if (ProjectsList.SelectedItem is Project p)
                 Controller.Instance.RemoveProject(p);
         }
 
         private void PickColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ProjectsList.SelectedItem is VProject p)
+            if (ProjectsList.SelectedItem is Project p)
             {
                 var dlg = new ColorDialog();
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -73,7 +76,7 @@ namespace ProjectMngr.Views
 
         private void ProjectNameBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (ProjectsList.SelectedItem is VProject p)
+            if (ProjectsList.SelectedItem is Project p)
                 p.Name = ProjectNameBox.Text;
         }
     }

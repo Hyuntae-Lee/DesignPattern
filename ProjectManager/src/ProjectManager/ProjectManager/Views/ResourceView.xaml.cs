@@ -1,20 +1,22 @@
-﻿using ProjectMngr.Models;
+﻿using ProjectManager.Controllers;
+using ProjectManager.Models;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
+using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Controller = ProjectMngr.Controllers.Controller;
-
-namespace ProjectMngr.Views
+namespace ProjectManager.Views
 {
     /// <summary>
     /// Interaction logic for ResourceView.xaml
@@ -34,7 +36,7 @@ namespace ProjectMngr.Views
 
         private void ResourcesList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (ResourcesList.SelectedItem is VResource r)
+            if (ResourcesList.SelectedItem is Resource r)
             {
                 ResourceNameBox.Text = r.Name;
                 ResourceColorRect.Fill = r.Brush;
@@ -48,20 +50,20 @@ namespace ProjectMngr.Views
 
         private void AddResourceBtn_Click(object sender, RoutedEventArgs e)
         {
-            var r = new VResource { Name = "New Resource" };
+            var r = new Resource { Name = "New Resource" };
             Controller.Instance.AddResource(r);
             ResourcesList.SelectedItem = r;
         }
 
         private void RemoveResourceBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ResourcesList.SelectedItem is VResource r)
+            if (ResourcesList.SelectedItem is Resource r)
                 Controller.Instance.RemoveResource(r);
         }
 
         private void PickColorBtn_Click(object sender, RoutedEventArgs e)
         {
-            if (ResourcesList.SelectedItem is VResource r)
+            if (ResourcesList.SelectedItem is Resource r)
             {
                 var dlg = new ColorDialog();
                 if (dlg.ShowDialog() == DialogResult.OK)
@@ -75,7 +77,7 @@ namespace ProjectMngr.Views
 
         private void ResourceNameBox_LostFocus(object sender, RoutedEventArgs e)
         {
-            if (ResourcesList.SelectedItem is VResource r)
+            if (ResourcesList.SelectedItem is Resource r)
                 r.Name = ResourceNameBox.Text;
         }
     }

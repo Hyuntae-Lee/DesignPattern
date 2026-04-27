@@ -1,19 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Media;
-using Color = System.Windows.Media.Color;
 
-namespace ProjectMngr.Models
+namespace ProjectManager.Models
 {
-    class VTask : INotifyPropertyChanged
+    class Task : INotifyPropertyChanged
     {
         private DateTime _beginDate = DateTime.Today;
         private DateTime _endDate = DateTime.Today.AddDays(7);
         private Color _color = Colors.LightBlue;
-        private VResource? _resource;
+        private Resource _resource;
 
         public DateTime BeginDate
         {
@@ -33,7 +34,7 @@ namespace ProjectMngr.Models
             set { _color = value; OnPropertyChanged(); OnPropertyChanged(nameof(Brush)); }
         }
 
-        public VResource? Resource
+        public Resource Resource
         {
             get => _resource;
             set { _resource = value; OnPropertyChanged(); }
@@ -41,8 +42,8 @@ namespace ProjectMngr.Models
 
         public SolidColorBrush Brush => new SolidColorBrush(_color);
 
-        public event PropertyChangedEventHandler? PropertyChanged;
-        protected void OnPropertyChanged([CallerMemberName] string? propName = null)
+        public event PropertyChangedEventHandler PropertyChanged;
+        protected void OnPropertyChanged([CallerMemberName] string propName = null)
             => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propName));
     }
 }
