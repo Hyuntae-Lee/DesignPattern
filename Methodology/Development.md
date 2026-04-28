@@ -7,23 +7,17 @@
    - A small document that answers: “Why did we design it this way?”
    - Example
    <pre>
-   +------------------------------------------------------------+
-   | ADR-003: Use file-based export instead of DB               |
-   |                                                            |
-   | Status: Accepted                                           |
-   |                                                            |
-   | Context:                                                   |
-   | - Large reports cause DB performance issues                |
-   | - Customers require offline access                         |
-   |                                                            |
-   | Decision:                                                  |
-   | - Export reports as files instead of storing in DB         |
-   |                                                            |
-   | Consequences:                                              |
-   | + Faster export                                            |
-   | + Easier distribution                                      |
-   | - No transactional consistency                             |
-   +------------------------------------------------------------+
+   ADR-003: Use file-based export instead of DB
+   Status: Accepted
+   Context:
+   - Large reports cause DB performance issues
+   - Customers require offline access
+   Decision:
+   - Export reports as files instead of storing in DB
+   Consequences:
+   + Faster export
+   + Easier distribution
+   - No transactional consistency
    </pre>
    - Where you store them
    <pre>
