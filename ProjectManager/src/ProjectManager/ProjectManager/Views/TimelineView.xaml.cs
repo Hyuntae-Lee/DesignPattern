@@ -21,9 +21,23 @@ namespace ProjectManager.Views
     /// </summary>
     public partial class TimeLineView : UserControl
     {
+        TimeLineViewViewModel _viewModel;
+
+        const int kDateW = 30;
+
         public TimeLineView()
         {
             InitializeComponent();
+
+            //
+            _viewModel = (TimeLineViewViewModel)DataContext;
+        }
+
+        protected override void OnRender(DrawingContext dc)
+        {
+            base.OnRender(dc);
+
+            dc.DrawRectangle(new SolidColorBrush(Colors.Red), new Pen(), new Rect(0, 0, 30, 30));
         }
     }
 }

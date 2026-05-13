@@ -9,13 +9,29 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="100" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
+            <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <!-- settings -->
         <Grid Grid.Row="0">
             <StackPanel Orientation="Horizontal">
                 <DatePicker SelectedDate="{Binding BeginTime}" />
                 <DatePicker SelectedDate="{Binding EndTime}" />
             </StackPanel>
+        </Grid>
+        <!-- year row -->
+        <Grid Grid.Row="1">
+            
+        </Grid>
+        <!-- month row -->
+        <Grid Grid.Row="2">
+
+        </Grid>
+        <!-- date row -->
+        <Grid Grid.Row="3">
+            <Canvas Name="canvasDate" />
         </Grid>
     </Grid>
 </UserControl>
