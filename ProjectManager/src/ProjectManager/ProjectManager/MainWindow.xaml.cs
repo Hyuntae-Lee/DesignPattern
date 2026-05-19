@@ -21,11 +21,14 @@ namespace ProjectManager
     /// </summary>
     public partial class MainWindow : Window
     {
-        public MainWindow(TimeLineViewViewModel timeLineViewViewModel)
+        public MainWindow(
+            TimeLineViewViewModel timeLineViewViewModel,
+            ProjectViewViewModel projectViewViewModel)
         {
             InitializeComponent();
 
             timeLineView.DataContext = timeLineViewViewModel;
+            projectView.DataContext = projectViewViewModel;
         }
     }
 }

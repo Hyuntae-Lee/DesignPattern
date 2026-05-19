@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ProjectManager.Models
 {
-    class ProjectResourceStorage
+    public class ProjectResourceStorage
     {
         public List<ProjectResource> projectResources;
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using ProjectManager.Models;
 using ProjectManager.ViewModels;
+using ProjectManager.Services;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,8 +24,14 @@ namespace ProjectManager
             var services = new ServiceCollection();
 
             _ = services.AddSingleton<Settings>();
-            
+            _ = services.AddSingleton<ProjectStorage>();
+            _ = services.AddSingleton(sp => new SqliteStorageService(
+                System.IO.Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "ProjectManager", "projectmanager.db")));
+
             _ = services.AddTransient<TimeLineViewViewModel>();
+            _ = services.AddTransient<ProjectViewViewModel>();
             _ = services.AddTransient<MainWindow>();
 
             _provider = services.BuildServiceProvider();

@@ -8,16 +8,18 @@
              d:DesignHeight="450" d:DesignWidth="800">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="100" />
+            <RowDefinition Height="auto" />
             <RowDefinition Height="30" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
         <!-- settings -->
-        <Grid Grid.Row="0">
-            <StackPanel Orientation="Horizontal">
-                <DatePicker SelectedDate="{Binding BeginTime}" />
-                <DatePicker SelectedDate="{Binding EndTime}" />
-            </StackPanel>
+        <Grid Grid.Row="0" Height="22">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="100" />
+                <ColumnDefinition Width="100" />
+            </Grid.ColumnDefinitions>
+            <DatePicker Grid.Column="0" SelectedDate="{Binding BeginTime}" Height="22" />
+            <DatePicker Grid.Column="1" SelectedDate="{Binding EndTime}"  Height="22" />
         </Grid>
         <!-- year/month row -->
         <Grid Grid.Row="1">

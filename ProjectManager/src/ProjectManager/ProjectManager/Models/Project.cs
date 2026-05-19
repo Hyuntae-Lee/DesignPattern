@@ -1,18 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace ProjectManager.Models
 {
-    class Project
+    public class Project : INotifyPropertyChanged
     {
-        public List<ProjectTask> projectTasks;
+        private string _name;
+
+        public string Name
+        {
+            get => _name;
+            set { _name = value; OnPropertyChanged(nameof(Name)); }
+        }
+
+        public ObservableCollection<ProjectTask> ProjectTasks { get; }
 
         public Project()
         {
-            projectTasks = new List<ProjectTask>();
+            _name = "New Project";
+            ProjectTasks = new ObservableCollection<ProjectTask>();
         }
+
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string name) =>
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
     }
 }
