@@ -39,5 +39,11 @@ namespace ProjectManager.Views
 
             dc.DrawRectangle(new SolidColorBrush(Colors.Red), new Pen(), new Rect(0, 0, 30, 30));
         }
+
+        private void DateScrollViewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (e.HorizontalChange != 0)
+                MonthScrollViewer.ScrollToHorizontalOffset(e.HorizontalOffset);
+        }
     }
 }
