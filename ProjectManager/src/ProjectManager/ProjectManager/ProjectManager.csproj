@@ -73,6 +73,11 @@
     <Compile Include="Controls\MonthHeaderLayer.cs" />
     <Compile Include="Controls\ProjectTaskLayer.cs" />
     <Compile Include="Controls\TimeGridLayer.cs" />
+    <Compile Include="Models\Project.cs" />
+    <Compile Include="Models\ProjectResource.cs" />
+    <Compile Include="Models\ProjectResourceStorage.cs" />
+    <Compile Include="Models\ProjectStorage.cs" />
+    <Compile Include="Models\ProjectTask.cs" />
     <Compile Include="Models\Settings.cs" />
     <Compile Include="ViewModels\ProjectViewViewModel.cs" />
     <Compile Include="ViewModels\ResourceViewViewModel.cs" />
