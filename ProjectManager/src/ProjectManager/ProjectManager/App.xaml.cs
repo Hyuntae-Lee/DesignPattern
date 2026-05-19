@@ -25,11 +25,16 @@ namespace ProjectManager
 
             _ = services.AddSingleton<Settings>();
             _ = services.AddSingleton<ProjectStorage>();
+            _ = services.AddSingleton<ProjectResourceStorage>();
             _ = services.AddSingleton(sp => new SqliteStorageService(
                 System.IO.Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                    "ProjectManager", "projectmanager.db")));
+                    "ProjectManager", "projectmanager.db"),
+                sp.GetRequiredService<Settings>(),
+                sp.GetRequiredService<ProjectStorage>(),
+                sp.GetRequiredService<ProjectResourceStorage>()));
 
+            _ = services.AddTransient<MainViewModel>();
             _ = services.AddTransient<TimeLineViewViewModel>();
             _ = services.AddTransient<ProjectViewViewModel>();
             _ = services.AddTransient<MainWindow>();

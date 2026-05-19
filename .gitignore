@@ -17,6 +17,7 @@ build*
 .vscode/
 output/
 packages/
+.claude/
 
 # Visual C++ cache files
 ipch/

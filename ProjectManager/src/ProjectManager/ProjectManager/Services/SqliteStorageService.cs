@@ -10,9 +10,20 @@ namespace ProjectManager.Services
     public class SqliteStorageService
     {
         private readonly string _connectionString;
+        private readonly Settings _settings;
+        private readonly ProjectStorage _projectStorage;
+        private readonly ProjectResourceStorage _resourceStorage;
 
-        public SqliteStorageService(string dbPath)
+        public SqliteStorageService(
+            string dbPath,
+            Settings settings,
+            ProjectStorage projectStorage,
+            ProjectResourceStorage resourceStorage)
         {
+            _settings = settings ?? throw new ArgumentNullException(nameof(settings));
+            _projectStorage = projectStorage ?? throw new ArgumentNullException(nameof(projectStorage));
+            _resourceStorage = resourceStorage ?? throw new ArgumentNullException(nameof(resourceStorage));
+
             var dir = Path.GetDirectoryName(dbPath);
             if (!string.IsNullOrEmpty(dir) && !Directory.Exists(dir))
                 Directory.CreateDirectory(dir);
@@ -38,35 +49,41 @@ namespace ProjectManager.Services
                     "  affiliation TEXT" +
                     ");");
                 ExecNonQuery(conn,
+                    "CREATE TABLE IF NOT EXISTS projects (" +
+                    "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "  name TEXT" +
+                    ");");
+                ExecNonQuery(conn,
                     "CREATE TABLE IF NOT EXISTS tasks (" +
                     "  id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "  project_id INTEGER," +
                     "  name TEXT," +
                     "  begin_time TEXT," +
                     "  end_time TEXT," +
-                    "  assignee_name TEXT" +
+                    "  assignee_name TEXT," +
+                    "  FOREIGN KEY(project_id) REFERENCES projects(id) ON DELETE CASCADE" +
                     ");");
             }
         }
 
         // Settings ------------------------------------------------------
 
-        public void SaveSettings(Settings settings)
+        public void SaveSettings()
         {
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
                 using (var tx = conn.BeginTransaction())
                 {
-                    UpsertSetting(conn, tx, "BeginTime", FormatDate(settings.BeginTime));
-                    UpsertSetting(conn, tx, "EndTime", FormatDate(settings.EndTime));
+                    UpsertSetting(conn, tx, "BeginTime", FormatDate(_settings.BeginTime));
+                    UpsertSetting(conn, tx, "EndTime", FormatDate(_settings.EndTime));
                     tx.Commit();
                 }
             }
         }
 
-        public Settings LoadSettings()
+        public void LoadSettings()
         {
-            var settings = new Settings();
             var values = new Dictionary<string, string>();
 
             using (var conn = new SQLiteConnection(_connectionString))
@@ -81,11 +98,9 @@ namespace ProjectManager.Services
             }
 
             if (values.TryGetValue("BeginTime", out var b) && TryParseDate(b, out var bt))
-                settings.BeginTime = bt;
+                _settings.BeginTime = bt;
             if (values.TryGetValue("EndTime", out var e) && TryParseDate(e, out var et))
-                settings.EndTime = et;
-
-            return settings;
+                _settings.EndTime = et;
         }
 
         private static void UpsertSetting(SQLiteConnection conn, SQLiteTransaction tx, string key, string value)
@@ -102,10 +117,8 @@ namespace ProjectManager.Services
 
         // Resources -----------------------------------------------------
 
-        public void SaveResources(ProjectResourceStorage storage)
+        public void SaveResources()
         {
-            if (storage == null) throw new ArgumentNullException(nameof(storage));
-
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
@@ -113,7 +126,7 @@ namespace ProjectManager.Services
                 {
                     ExecNonQuery(conn, tx, "DELETE FROM resources;");
 
-                    foreach (var r in storage.projectResources)
+                    foreach (var r in _resourceStorage.projectResources)
                     {
                         using (var cmd = new SQLiteCommand(
                             "INSERT OR REPLACE INTO resources (name, affiliation) VALUES (@n, @a);", conn, tx))
@@ -129,9 +142,10 @@ namespace ProjectManager.Services
             }
         }
 
-        public ProjectResourceStorage LoadResources()
+        public void LoadResources()
         {
-            var storage = new ProjectResourceStorage();
+            _resourceStorage.projectResources.Clear();
+
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
@@ -140,7 +154,7 @@ namespace ProjectManager.Services
                 {
                     while (reader.Read())
                     {
-                        storage.projectResources.Add(new ProjectResource
+                        _resourceStorage.projectResources.Add(new ProjectResource
                         {
                             Name = reader.IsDBNull(0) ? null : reader.GetString(0),
                             Affiliation = reader.IsDBNull(1) ? null : reader.GetString(1),
@@ -148,33 +162,43 @@ namespace ProjectManager.Services
                     }
                 }
             }
-            return storage;
         }
 
-        // Project (tasks) -----------------------------------------------
+        // Projects (with tasks) -----------------------------------------
 
-        public void SaveProject(Project project)
+        public void SaveProjects()
         {
-            if (project == null) throw new ArgumentNullException(nameof(project));
-
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
                 using (var tx = conn.BeginTransaction())
                 {
                     ExecNonQuery(conn, tx, "DELETE FROM tasks;");
+                    ExecNonQuery(conn, tx, "DELETE FROM projects;");
 
-                    foreach (var t in project.ProjectTasks)
+                    foreach (var project in _projectStorage.Projects)
                     {
+                        long projectId;
                         using (var cmd = new SQLiteCommand(
-                            "INSERT INTO tasks (name, begin_time, end_time, assignee_name) " +
-                            "VALUES (@n, @b, @e, @a);", conn, tx))
+                            "INSERT INTO projects (name) VALUES (@n); SELECT last_insert_rowid();", conn, tx))
                         {
-                            cmd.Parameters.AddWithValue("@n", t.Name ?? string.Empty);
-                            cmd.Parameters.AddWithValue("@b", FormatDate(t.BeginTime));
-                            cmd.Parameters.AddWithValue("@e", FormatDate(t.EndTime));
-                            cmd.Parameters.AddWithValue("@a", (object)t.Assignee?.Name ?? DBNull.Value);
-                            cmd.ExecuteNonQuery();
+                            cmd.Parameters.AddWithValue("@n", project.Name ?? string.Empty);
+                            projectId = (long)cmd.ExecuteScalar();
+                        }
+
+                        foreach (var t in project.ProjectTasks)
+                        {
+                            using (var cmd = new SQLiteCommand(
+                                "INSERT INTO tasks (project_id, name, begin_time, end_time, assignee_name) " +
+                                "VALUES (@p, @n, @b, @e, @a);", conn, tx))
+                            {
+                                cmd.Parameters.AddWithValue("@p", projectId);
+                                cmd.Parameters.AddWithValue("@n", t.Name ?? string.Empty);
+                                cmd.Parameters.AddWithValue("@b", FormatDate(t.BeginTime));
+                                cmd.Parameters.AddWithValue("@e", FormatDate(t.EndTime));
+                                cmd.Parameters.AddWithValue("@a", (object)t.Assignee?.Name ?? DBNull.Value);
+                                cmd.ExecuteNonQuery();
+                            }
                         }
                     }
 
@@ -183,44 +207,61 @@ namespace ProjectManager.Services
             }
         }
 
-        public Project LoadProject(ProjectResourceStorage resources = null)
+        public void LoadProjects()
         {
-            var project = new Project();
+            _projectStorage.Projects.Clear();
 
-            Dictionary<string, ProjectResource> lookup = null;
-            if (resources != null)
+            var lookup = new Dictionary<string, ProjectResource>(StringComparer.Ordinal);
+            foreach (var r in _resourceStorage.projectResources)
             {
-                lookup = new Dictionary<string, ProjectResource>(StringComparer.Ordinal);
-                foreach (var r in resources.projectResources)
-                {
-                    if (!string.IsNullOrEmpty(r.Name) && !lookup.ContainsKey(r.Name))
-                        lookup[r.Name] = r;
-                }
+                if (!string.IsNullOrEmpty(r.Name) && !lookup.ContainsKey(r.Name))
+                    lookup[r.Name] = r;
             }
 
             using (var conn = new SQLiteConnection(_connectionString))
             {
                 conn.Open();
-                using (var cmd = new SQLiteCommand(
-                    "SELECT name, begin_time, end_time, assignee_name FROM tasks;", conn))
+
+                var projectsById = new Dictionary<long, Project>();
+                using (var cmd = new SQLiteCommand("SELECT id, name FROM projects;", conn))
                 using (var reader = cmd.ExecuteReader())
                 {
                     while (reader.Read())
                     {
+                        var id = reader.GetInt64(0);
+                        var project = new Project
+                        {
+                            Name = reader.IsDBNull(1) ? null : reader.GetString(1),
+                        };
+                        projectsById[id] = project;
+                        _projectStorage.Projects.Add(project);
+                    }
+                }
+
+                using (var cmd = new SQLiteCommand(
+                    "SELECT project_id, name, begin_time, end_time, assignee_name FROM tasks;", conn))
+                using (var reader = cmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (reader.IsDBNull(0)) continue;
+                        var projectId = reader.GetInt64(0);
+                        if (!projectsById.TryGetValue(projectId, out var project)) continue;
+
                         var task = new ProjectTask
                         {
-                            Name = reader.IsDBNull(0) ? null : reader.GetString(0),
+                            Name = reader.IsDBNull(1) ? null : reader.GetString(1),
                         };
 
-                        if (!reader.IsDBNull(1) && TryParseDate(reader.GetString(1), out var bt))
+                        if (!reader.IsDBNull(2) && TryParseDate(reader.GetString(2), out var bt))
                             task.BeginTime = bt;
-                        if (!reader.IsDBNull(2) && TryParseDate(reader.GetString(2), out var et))
+                        if (!reader.IsDBNull(3) && TryParseDate(reader.GetString(3), out var et))
                             task.EndTime = et;
 
-                        if (!reader.IsDBNull(3))
+                        if (!reader.IsDBNull(4))
                         {
-                            var assigneeName = reader.GetString(3);
-                            if (lookup != null && lookup.TryGetValue(assigneeName, out var resource))
+                            var assigneeName = reader.GetString(4);
+                            if (lookup.TryGetValue(assigneeName, out var resource))
                                 task.Assignee = resource;
                             else
                                 task.Assignee = new ProjectResource { Name = assigneeName };
@@ -230,8 +271,6 @@ namespace ProjectManager.Services
                     }
                 }
             }
-
-            return project;
         }
 
         // Helpers -------------------------------------------------------

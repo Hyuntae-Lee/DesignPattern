@@ -23,10 +23,12 @@ namespace ProjectManager
     {
         public MainWindow(
             TimeLineViewViewModel timeLineViewViewModel,
-            ProjectViewViewModel projectViewViewModel)
+            ProjectViewViewModel projectViewViewModel,
+            MainViewModel mainViewModel)
         {
             InitializeComponent();
 
+            DataContext = mainViewModel;
             timeLineView.DataContext = timeLineViewViewModel;
             projectView.DataContext = projectViewViewModel;
         }

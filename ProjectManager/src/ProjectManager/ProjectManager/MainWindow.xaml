@@ -7,13 +7,30 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="600" Width="1200">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="250" />
-            <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="250" />
-        </Grid.ColumnDefinitions>
-        <views:ProjectView Grid.Column="0" x:Name="projectView" />
-        <views:TimeLineView Grid.Column="1" x:Name="timeLineView"/>
-        <views:ResourceView Grid.Column="2" x:Name="resourceView"/>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <!-- functions -->
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="60" />
+                <ColumnDefinition Width="60" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="1" Content="Save" Command="{Binding SaveCommand}" />
+            <Button Grid.Column="2" Content="Load" Command="{Binding LoadCommand}" />
+        </Grid>
+        <!-- contents -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="250" />
+            </Grid.ColumnDefinitions>
+            <views:ProjectView Grid.Column="0" x:Name="projectView" />
+            <views:TimeLineView Grid.Column="1" x:Name="timeLineView"/>
+            <views:ResourceView Grid.Column="2" x:Name="resourceView"/>
+        </Grid>
     </Grid>
 </Window>
